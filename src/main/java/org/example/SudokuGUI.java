@@ -7,8 +7,8 @@ import java.awt.event.*;
 
 
 
-        private Sudoku sudoku;
-        private JTextField[][] celdas = new JTextField[9][9];
+        Sudoku sudoku;
+        JTextField[][] celdas = new JTextField[9][9];
         private JComboBox<String> dificultadCombo;
         private JButton verificarBtn;
 
@@ -115,22 +115,32 @@ import java.awt.event.*;
             }
         }
 
+
         @Override
         public void verificarJuego() {
+            // Actualizar todo el tablero desde las celdas visibles
             for (int fila = 0; fila < 9; fila++) {
                 for (int col = 0; col < 9; col++) {
-                    if (sudoku.getTablero()[fila][col] == 0) {
-                        String texto = celdas[fila][col].getText();
-                        if (!texto.isEmpty()) {
-                            int valor = Integer.parseInt(texto);
-                            if (!sudoku.esMovimientoValido(fila, col, valor)) {
-                                JOptionPane.showMessageDialog(this,
-                                        "Error en fila " + fila + ", columna " + col + " con valor " + valor,
-                                        "Movimiento inválido", JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-                            sudoku.colocarNumero(fila, col, valor);
-                        }
+                    JTextField celda = celdas[fila][col];
+                    String texto = celda.getText();
+                    if (!texto.isEmpty()) {
+                        int valor = Integer.parseInt(texto);
+                        sudoku.colocarNumero(fila, col, valor);
+                    } else {
+                        sudoku.colocarNumero(fila, col, 0); // casilla vacía
+                    }
+                }
+            }
+
+            // Validar cada número colocado
+            for (int fila = 0; fila < 9; fila++) {
+                for (int col = 0; col < 9; col++) {
+                    int valor = sudoku.getTablero()[fila][col];
+                    if (valor != 0 && !sudoku.esMovimientoValido(fila, col, valor)) {
+                        JOptionPane.showMessageDialog(this,
+                                "Error en fila " + fila + ", columna " + col + " con valor " + valor,
+                                "Movimiento inválido", JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 }
             }
@@ -143,6 +153,7 @@ import java.awt.event.*;
                         JOptionPane.WARNING_MESSAGE);
             }
         }
+
 
         // Límite de caracteres en JTextField, CLASE ANIDADAS
         class JTextFieldLimit extends javax.swing.text.PlainDocument {

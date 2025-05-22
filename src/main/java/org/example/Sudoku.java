@@ -1,8 +1,8 @@
 package org.example;
 
 public class Sudoku implements SudokuInterface {
-    private int[][] tablero;
-    private boolean[][] celdasFijas;
+    protected int[][] tablero;
+    protected boolean[][] celdasFijas;
 
     public Sudoku() {
         tablero = new int[9][9];
@@ -105,6 +105,11 @@ public class Sudoku implements SudokuInterface {
     public int[][] getTablero() {
         return tablero;
     }
+
+    public int getValor(int fila, int columna) {
+        return tablero[fila][columna];
+    }
+
 
     public void setCeldaFija(int fila, int columna, int valor) {
         tablero[fila][columna] = valor;
