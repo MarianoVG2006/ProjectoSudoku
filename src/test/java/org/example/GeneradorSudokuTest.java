@@ -17,21 +17,21 @@ class GeneradorSudokuTest {
     }
 
     @Test
-    void generarFacilDebeGenerarTableroConEntre51Y81CeldasLlenas() {
+    void generarFacilTableroConEntre51Y81CeldasLlenas() {
         GeneradorSudoku.generar(sudoku, "facil");
         int noVacias = contarCeldasNoVacias(sudoku);
         assertTrue(noVacias >= 51 && noVacias <= 81, "El tablero fácil debe tener entre 51 y 81 celdas no vacías");
     }
 
     @Test
-    void generarMedioDebeGenerarTableroConEntre41Y81CeldasLlenas() {
+    void generarMedioTableroConEntre41Y81CeldasLlenas() {
         GeneradorSudoku.generar(sudoku, "medio");
         int noVacias = contarCeldasNoVacias(sudoku);
         assertTrue(noVacias >= 41 && noVacias <= 81, "El tablero medio debe tener entre 41 y 81 celdas no vacías");
     }
 
     @Test
-    void generarDificilDebeGenerarTableroConEntre31Y81CeldasLlenas() {
+    void generarDificilTableroConEntre31Y81CeldasLlenas() {
         GeneradorSudoku.generar(sudoku, "dificil");
         int noVacias = contarCeldasNoVacias(sudoku);
         assertTrue(noVacias >= 31 && noVacias <= 81, "El tablero difícil debe tener entre 31 y 81 celdas no vacías");
