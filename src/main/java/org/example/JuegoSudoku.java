@@ -54,10 +54,19 @@ public class JuegoSudoku implements JuegoSudokuInterface {
 
                 scanner.nextLine(); // Limpia la línea pendiente tras los nextInt
 
-                if (!sudoku.colocarNumero(fila, columna, valor)) {
-                    System.out.println("❌ Movimiento inválido, intenta de nuevo.");
-                } else {
-                    System.out.println("✅ Movimiento realizado.");
+                // Ahora usamos try-catch para manejar excepciones personalizadas
+                try {
+                    if (sudoku.colocarNumero(fila, columna, valor)) {
+                        System.out.println("✅ Movimiento realizado.");
+                    } else {
+                        System.out.println("❌ Movimiento inválido.");
+                    }
+                } catch (EntradasFueraDeRangoException e) {
+                    System.out.println("⚠️ Valor fuera de rango: " + e.getMessage());
+                } catch (MovimientoInvalidoException e) {
+                    System.out.println("❌ Movimiento inválido: " + e.getMessage());
+                } catch (SudokuException e) {
+                    System.out.println("⚠️ Error del juego: " + e.getMessage());
                 }
 
             } catch (InputMismatchException e) {

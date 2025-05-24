@@ -3,6 +3,7 @@ package org.example;
 import java.util.Random;
 
 public class GeneradorSudoku {
+
     public static void generar(Sudoku sudoku, String dificultad) {
         int[][] tablero = new int[9][9];
         resolver(tablero);
@@ -24,10 +25,15 @@ public class GeneradorSudoku {
             }
         }
 
+        // Fijar las celdas no vacías como celdas fijas
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (tablero[i][j] != 0) {
-                    sudoku.setCeldaFija(i, j, tablero[i][j]);
+                    try {
+                        sudoku.setCeldaFija(i, j, tablero[i][j]);
+                    } catch (SudokuException e) {
+                        throw new RuntimeException("Error al fijar la celda (" + i + ", " + j + "): " + e.getMessage(), e);
+                    }
                 }
             }
         }

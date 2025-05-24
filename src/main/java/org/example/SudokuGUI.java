@@ -116,43 +116,56 @@ import java.awt.event.*;
         }
 
 
+
         @Override
         public void verificarJuego() {
-            // Actualizar todo el tablero desde las celdas visibles
+            // Actualizar el tablero desde la interfaz
             for (int fila = 0; fila < 9; fila++) {
                 for (int col = 0; col < 9; col++) {
                     JTextField celda = celdas[fila][col];
                     String texto = celda.getText();
-                    if (!texto.isEmpty()) {
-                        int valor = Integer.parseInt(texto);
-                        sudoku.colocarNumero(fila, col, valor);
-                    } else {
-                        sudoku.colocarNumero(fila, col, 0); // casilla vacía
-                    }
-                }
-            }
-
-            // Validar cada número colocado
-            for (int fila = 0; fila < 9; fila++) {
-                for (int col = 0; col < 9; col++) {
-                    int valor = sudoku.getTablero()[fila][col];
-                    if (valor != 0 && !sudoku.esMovimientoValido(fila, col, valor)) {
+                    try {
+                        if (!texto.isEmpty()) {
+                            int valor = Integer.parseInt(texto);
+                            sudoku.colocarNumero(fila, col, valor);
+                        } else {
+                            sudoku.colocarNumero(fila, col, 0); // celda vacía
+                        }
+                    } catch (EntradasFueraDeRangoException e) {
                         JOptionPane.showMessageDialog(this,
-                                "Error en fila " + fila + ", columna " + col + " con valor " + valor,
+                                "Valor fuera de rango en (" + fila + "," + col + "): " + e.getMessage(),
+                                "Error de rango", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    } catch (MovimientoInvalidoException e) {
+                        JOptionPane.showMessageDialog(this,
+                                "Movimiento inválido en (" + fila + "," + col + "): " + e.getMessage(),
                                 "Movimiento inválido", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    } catch (SudokuException e) {
+                        JOptionPane.showMessageDialog(this,
+                                "Error de Sudoku en (" + fila + "," + col + "): " + e.getMessage(),
+                                "Error del juego", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this,
+                                "Entrada no válida en (" + fila + "," + col + "): debe ser un número entre 1 y 9.",
+                                "Formato inválido", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
             }
 
             if (sudoku.estaResuelto()) {
-                JOptionPane.showMessageDialog(this, "🎉 ¡Felicidades, resolviste el Sudoku!", "¡Completado!",
-                        JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "🎉 ¡Felicidades, resolviste el Sudoku!",
+                        "¡Completado!", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Aún hay errores o casillas vacías.", "No resuelto",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Aún hay errores o casillas vacías.",
+                        "No resuelto", JOptionPane.WARNING_MESSAGE);
             }
         }
+
 
 
         // Límite de caracteres en JTextField, CLASE ANIDADAS

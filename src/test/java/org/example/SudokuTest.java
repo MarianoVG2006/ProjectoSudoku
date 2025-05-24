@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.Sudoku;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,35 +16,41 @@ class SudokuTest {
 
     @Test
     void generarTablero() {
-
         assertDoesNotThrow(() -> sudoku.generarTablero("facil"));
     }
 
     @Test
     void esMovimientoValido() {
-        // Movimiento válido al principio (celda vacía)
         assertTrue(sudoku.esMovimientoValido(0, 0, 5));
-
-        // Colocar el número y luego intentar colocarlo de nuevo en misma fila
-        sudoku.colocarNumero(0, 0, 5);
+        try {
+            sudoku.colocarNumero(0, 0, 5);
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción: " + e.getMessage());
+        }
         assertFalse(sudoku.esMovimientoValido(0, 1, 5));
     }
 
     @Test
     void colocarNumero() {
-        assertTrue(sudoku.colocarNumero(1, 1, 7));
-        assertEquals(7, sudoku.getValor(1, 1));
+        try {
+            // Movimiento válido
+            assertTrue(sudoku.colocarNumero(1, 1, 7));
+            assertEquals(7, sudoku.getValor(1, 1));
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción al colocar un número válido: " + e.getMessage());
+        }
 
-        // Colocar número en conflicto en la misma fila
-        assertFalse(sudoku.colocarNumero(1, 2, 7));
+        // Movimiento inválido: conflicto con 7 en la misma fila
+        SudokuException ex = assertThrows(SudokuException.class, () -> {
+            sudoku.colocarNumero(1, 2, 7);
+        });
+        assertTrue(ex.getMessage().contains("No se puede colocar el número"));
     }
 
     @Test
     void estaResuelto() {
-        // Tablero vacío, claramente no resuelto
         assertFalse(sudoku.estaResuelto());
 
-        // Llenar el tablero con una solución válida (para test simple)
         int[][] solucion = {
                 {1,2,3,4,5,6,7,8,9},
                 {4,5,6,7,8,9,1,2,3},
@@ -58,17 +63,24 @@ class SudokuTest {
                 {9,1,2,3,4,5,6,7,8}
         };
 
-        for (int i = 0; i < 9; i++)
-            for (int j = 0; j < 9; j++)
-                sudoku.colocarNumero(i, j, solucion[i][j]);
+        try {
+            for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++)
+                    sudoku.colocarNumero(i, j, solucion[i][j]);
+        } catch (SudokuException e) {
+            fail("Excepción inesperada al rellenar el tablero: " + e.getMessage());
+        }
 
         assertTrue(sudoku.estaResuelto());
     }
 
     @Test
     void mostrarTablero() {
-
-        sudoku.colocarNumero(0, 0, 1);
+        try {
+            sudoku.colocarNumero(0, 0, 1);
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción: " + e.getMessage());
+        }
         assertDoesNotThrow(() -> sudoku.mostrarTablero());
     }
 
@@ -82,21 +94,37 @@ class SudokuTest {
 
     @Test
     void getValor() {
-        sudoku.colocarNumero(2, 3, 6);
+        try {
+            sudoku.colocarNumero(2, 3, 6);
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción: " + e.getMessage());
+        }
         assertEquals(6, sudoku.getValor(2, 3));
     }
 
+
     @Test
     void setCeldaFija() {
-        sudoku.setCeldaFija(4, 4, 8);
-        assertEquals(8, sudoku.getValor(4, 4));
-        assertTrue(sudoku.esCeldaFija(4, 4));
+        try {
+            boolean resultado = sudoku.esMovimientoValido(4, 4, 8);
+            assertTrue(resultado, "El movimiento debería ser válido antes de fijar la celda.");
+            sudoku.setCeldaFija(4, 4, 8);
+            assertEquals(8, sudoku.getValor(4, 4));
+            assertTrue(sudoku.esCeldaFija(4, 4));
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción al fijar celda: " + e.getMessage());
+        }
     }
+
 
     @Test
     void esCeldaFija() {
         assertFalse(sudoku.esCeldaFija(0, 0));
-        sudoku.setCeldaFija(0, 0, 3);
+        try {
+            sudoku.setCeldaFija(0, 0, 3);
+        } catch (SudokuException e) {
+            fail("No se esperaba excepción al fijar celda: " + e.getMessage());
+        }
         assertTrue(sudoku.esCeldaFija(0, 0));
     }
 }
