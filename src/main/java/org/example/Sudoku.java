@@ -55,7 +55,7 @@ public class Sudoku implements SudokuInterface {
         }
 
         // Verifica si el valor está en el rango permitido
-        if (valor < 1 || valor > 9) {
+        if (valor < 0 || valor > 9) {
             throw new EntradasFueraDeRangoException(valor);
         }
 
@@ -74,9 +74,9 @@ public class Sudoku implements SudokuInterface {
         return true;
     }
 
+
     @Override
     public boolean estaResuelto() {
-        // Verifica filas y columnas
         for (int i = 0; i < 9; i++) {
             boolean[] filaCheck = new boolean[9];
             boolean[] colCheck = new boolean[9];
@@ -84,22 +84,30 @@ public class Sudoku implements SudokuInterface {
                 int numFila = tablero[i][j];
                 int numCol = tablero[j][i];
 
-                if (numFila == 0 || numCol == 0) return false;
-                if (filaCheck[numFila - 1] || colCheck[numCol - 1]) return false;
+                if (numFila < 1 || numFila > 9 || filaCheck[numFila - 1]) {
+                    System.out.println("Error en fila " + i + " columna " + j + " valor: " + numFila);
+                    return false;
+                }
+                if (numCol < 1 || numCol > 9 || colCheck[numCol - 1]) {
+                    System.out.println("Error en columna " + i + " fila " + j + " valor: " + numCol);
+                    return false;
+                }
 
                 filaCheck[numFila - 1] = true;
                 colCheck[numCol - 1] = true;
             }
         }
 
-        // Verifica bloques 3x3
         for (int blockRow = 0; blockRow < 3; blockRow++) {
             for (int blockCol = 0; blockCol < 3; blockCol++) {
                 boolean[] blockCheck = new boolean[9];
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
                         int val = tablero[blockRow * 3 + i][blockCol * 3 + j];
-                        if (val == 0 || blockCheck[val - 1]) return false;
+                        if (val < 1 || val > 9 || blockCheck[val - 1]) {
+                            System.out.println("Error en bloque (" + blockRow + "," + blockCol + ") en posición [" + i + "," + j + "] valor: " + val);
+                            return false;
+                        }
                         blockCheck[val - 1] = true;
                     }
                 }
@@ -108,6 +116,16 @@ public class Sudoku implements SudokuInterface {
 
         return true;
     }
+
+    public boolean estaCompleto() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (tablero[i][j] == 0) return false;
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public void mostrarTablero() {
