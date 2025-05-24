@@ -1,104 +1,231 @@
-# Proyecto Sudoku - Documentación Técnica
+# ProyectoSudoku
 
-Este proyecto implementa un juego de Sudoku en Java que permite:
-- Generar tableros válidos de Sudoku según dificultad (fácil, medio, difícil)
-- Validar movimientos según las reglas del juego
-- Resolver el tablero usando el algoritmo de backtracking
-- Manejar excepciones personalizadas para una experiencia robusta
-- Ejecutar pruebas unitarias con JUnit
-- Interactuar desde la consola con una interfaz clara
+**ProyectoSudoku** es una aplicación Java completa que implementa el clásico juego de Sudoku, ofreciendo múltiples interfaces de usuario (gráfica y consola), una lógica de juego robusta y un diseño arquitectónico bien estructurado.
 
 ---
 
----
+## 🧱 Arquitectura General
 
-## 📋 Rúbrica de Evaluación
+El proyecto sigue una arquitectura en capas con una clara separación de responsabilidades:
 
-| **Aspecto a Evaluar**                 | **Descripción**                                                                                 | **Peso (sobre 10)** |
-|--------------------------------------|-------------------------------------------------------------------------------------------------|---------------------|
-| **1. Generación del Tablero**        | Creación correcta de tableros para niveles fácil, medio y difícil, respetando las reglas.       | 1.0                 |
-| **2. Validación de Movimientos**     | Validación en tiempo real de las jugadas con feedback claro al usuario.                         | 1.0                 |
-| **3. Implementación del Backtracking**| Uso eficiente del algoritmo de backtracking para generar y resolver tableros.                   | 1.5                 |
-| **4. Diseño y Arquitectura**         | Estructura modular, separación de responsabilidades y uso adecuado de POO.                      | 1.0                 |
-| **5. Manejo de Excepciones**         | Uso de excepciones específicas con mensajes claros (SudokuException, etc.).                     | 1.0                 |
-| **6. Calidad del Código y Comentarios** | Código legible, bien nombrado y comentado.                                                    | 0.5                 |
-| **7. Pruebas Unitarias**             | Pruebas JUnit completas, cubriendo casos positivos, negativos y bordes.                         | 1.5                 |
-| **8. Interfaz de Usuario**           | Interfaz funcional (consola o gráfica), clara y fácil de usar.                                  | 1.0                 |
-| **9. Documentación y Entrega**       | Análisis técnico, diagramas UML, matriz de trazabilidad y organización del proyecto.            | 1.5                 |
+### 🎮 Motor de Juego Central
+
+La clase `Sudoku` (`Sudoku.java`) implementa la lógica principal del juego. Mantiene el estado del tablero usando dos estructuras:
+
+- `tablero[9][9]`: matriz que almacena los valores actuales del Sudoku.
+- `celdasFijas[9][9]`: matriz booleana que indica qué celdas son pistas iniciales y no pueden modificarse.
 
 ---
 
-## 📚 Contenido del Proyecto
+## 🧩 Generación y Resolución de Puzzles
 
-- **Lenguaje:** Java
-- **Herramientas:** JDK 17+, JUnit 5, IntelliJ IDEA / Eclipse
-- **Paquetes principales:**
-  - `org.example`: Clases principales (`Sudoku`, `GeneradorSudoku`, etc.)
-  - `org.example.exceptions`: Excepciones personalizadas
-  - `test`: Pruebas unitarias
+La clase `GeneradorSudoku` (`GeneradorSudoku.java`) se encarga de crear puzzles de distintos niveles de dificultad:
 
----
+- **Fácil**: remueve 30 celdas (deja ~51 llenas).
+- **Medio**: remueve 40 celdas (deja ~41 llenas).
+- **Difícil**: remueve 50 celdas (deja ~31 llenas).
 
-## 🧠 Lógica del Juego
-
-- El tablero es una matriz 9x9.
-- La clase `GeneradorSudoku` genera tableros aleatorios y resuelve con backtracking.
-- Se pueden fijar celdas para representar el tablero inicial.
-- Se validan los movimientos conforme a las reglas del Sudoku.
-- Se verifica si el tablero está resuelto al completar.
+El generador usa un **algoritmo de backtracking** para crear un tablero completamente válido y luego elimina celdas aleatoriamente en función de la dificultad.
 
 ---
 
-## 🛠️ Arquitectura
+## 🖥️ Interfaces de Usuario Duales
 
-- **Sudoku:** Lógica del tablero y operaciones.
-- **GeneradorSudoku:** Generación y resolución de tableros.
-- **Excepciones personalizadas:** Para errores específicos.
-- **SudokuTest:** Verificación con JUnit.
+### 💡 Interfaz Gráfica (Swing)
+
+La clase `SudokuGUI` (`SudokuGUI.java`) proporciona una experiencia visual completa:
+
+- Grid 9x9 de `JTextField` con validación en tiempo real.
+- Feedback visual: verde para movimientos válidos, rosa para inválidos.
+- Selector de dificultad con `JComboBox`.
+- Solo permite introducir dígitos del 1 al 9.
+
+### 🧾 Interfaz de Consola
+
+La clase `JuegoSudoku` (`JuegoSudoku.java`) permite jugar desde consola:
+
+- Entrada basada en coordenadas `(fila, columna, valor)`.
+- Manejo de excepciones para entradas inválidas.
+- Visualización en texto ASCII del tablero.
 
 ---
 
-## 🧪 Pruebas Unitarias
+## ✅ Validación de Reglas de Sudoku
 
-- **JUnit 5**
-- Se incluyen tests para:
-  - Generación del tablero
-  - Validación de movimientos
-  - Colocación de números
-  - Verificación de tablero resuelto
-  - Manejo de excepciones
-  - Métodos auxiliares (`getValor`, `mostrarTablero`, etc.)
+El método `esMovimientoValido` (`Sudoku.java`) valida que los movimientos respeten las tres reglas del Sudoku:
+
+1. No modificar **celdas fijas**.
+2. No repetir números en la **misma fila o columna**.
+3. No repetir números en el **bloque 3x3** correspondiente.
 
 ---
+
+## 🧪 Estrategia de Testing Comprehensiva
+
+El proyecto incluye una suite robusta de pruebas unitarias (JUnit):
+
+### 🔧 Testing del Generador
+
+- `GeneradorSudokuTest` (`GeneradorSudokuTest.java`) verifica:
+  - Que se generen correctamente los niveles de dificultad.
+  - Que el tablero generado se pueda resolver.
+
+### 🔎 Testing de Lógica de Juego
+
+- `SudokuTest` (`SudokuTest.java`) valida:
+  - La lógica de colocación de números.
+  - La validez de movimientos.
+  - La detección de tablero resuelto.
+
+### 🖼️ Testing de Interfaces
+
+- `SudokuGUITest` (`SudokuGUITest.java`) valida la generación del tablero gráfico.
+- `JuegoSudokuTest` (`JuegoSudokuTest.java`) utiliza mocks para simular la entrada del usuario por consola.
+
+---
+
+## 🚀 Punto de Entrada
+
+La ejecución comienza en `Main` (`Main.java`), que lanza la interfaz gráfica por defecto mediante:
 
 ## 📐 UML (Diagrama de Clases)
 
 
 ```mermaid
+
 classDiagram
-    class Sudoku {
-        +generarTablero()
-        +esMovimientoValido()
-        +colocarNumero()
-        +estaResuelto()
-        +mostrarTablero()
-        +getTablero()
-        +getValor()
-        +setCeldaFija()
-        +esCeldaFija()
-    }
 
-    class GeneradorSudoku {
-        +generar()
-        +resolver()
-    }
+class Sudoku {
+  - int[][] tablero
+  - boolean[][] celdasFijas
+  + esMovimientoValido(int fila, int col, int valor) boolean
+  + colocarNumero(int fila, int col, int valor) boolean
+  + estaResuelto() boolean
+  + generarTablero(String dificultad) void
+  + mostrarTablero() void
+  + getTablero() int[][]
+  + getValor(int fila, int columna) int
+  + setCeldaFija(int fila, int columna, int valor) void
+  + esCeldaFija(int fila, int columna) boolean
+}
 
-    class SudokuException
-    class MovimientoInvalidoException
-    class EntradasFueraDeRangoException
+class GeneradorSudoku {
+  + generar(Sudoku sudoku, String dificultad) void
+  + resolver(int[][] tablero) boolean
+  + esSeguro(int[][] tablero, int fila, int col, int num) boolean
+}
 
-    Sudoku --> GeneradorSudoku
-    MovimientoInvalidoException --|> SudokuException
-    EntradasFueraDeRangoException --|> SudokuException
+class SudokuGUI {
+  - Sudoku sudoku
+  - JTextField[][] celdas
+  - JComboBox~String~ dificultadCombo
+  - JButton verificarBtn
+  - JTextField filelim
+  + generarTablero() void
+  + verificarJuego() void
+}
+
+class JuegoSudoku {
+  - Sudoku sudoku
+  - Scanner scanner
+  + JuegoSudoku()
+  + JuegoSudoku(Scanner, Sudoku)
+  + iniciar() void
+}
+
+
+class SudokuInterface {
+  + esMovimientoValido(int fila, int col, int valor) boolean
+  + colocarNumero(int fila, int col, int valor) boolean
+  + estaResuelto() boolean
+  + generarTablero(String dificultad) void
+  + mostrarTablero() void
+  + getTablero() int[][]
+}
+
+class SudokuGUIInterface {
+  + generarTablero() void
+  + verificarJuego() void
+}
+
+class JuegoSudokuInterface {
+  + iniciar() void
+}
+
+
+
+SudokuGUI --> SudokuGUIInterface 
+SudokuGUI --> Sudoku : usa
+SudokuGUI --> JTextField : contiene
+
+JuegoSudoku --> JuegoSudokuInterface 
+JuegoSudoku --> Sudoku : usa
+
+
+Sudoku --> SudokuInterface : implementa
+Sudoku --> GeneradorSudoku : llama a
 
 ```
+## 📋 Matriz de Trazabilidad del Proyecto
+
+| Requisito Funcional | Componente de Implementación         | Archivo de Prueba            | Método de Prueba                                                   | Estado |
+|---------------------|--------------------------------------|-------------------------------|----------------------------------------------------------------------|--------|
+| RF-001: Generar tablero Sudoku | `GeneradorSudoku.generar()`         | `GeneradorSudokuTest.java`    | `generarFacilTableroConEntre51Y81CeldasLlenas()`                   | ✅     |
+| RF-002: Validar movimientos    | `Sudoku.esMovimientoValido()`      | `SudokuTest.java`             | `esMovimientoValido()`                                              | ✅     |
+| RF-003: Colocar números        | `Sudoku.colocarNumero()`           | `SudokuTest.java`             | `colocarNumero()`                                                   | ✅     |
+| RF-004: Detectar solución completa | `Sudoku.estaResuelto()`           | `SudokuTest.java`             | `estaResuelto()`                                                    | ✅     |
+| RF-005: Interfaz gráfica       | `SudokuGUI`                        | `SudokuGUITest.java`          | `generarTablero()`, `verificarJuego()`                              | ✅     |
+| RF-006: Interfaz de consola    | `JuegoSudoku`                      | `JuegoSudokuTest.java`        | `iniciar()`                                                         | ✅     |
+| RF-007: Niveles de dificultad  | `GeneradorSudoku.generar()`        | `GeneradorSudokuTest.java`    | `generarMedioTableroConEntre41Y81CeldasLlenas()`, `generarDificilTableroConEntre31Y81CeldasLlenas()` | ✅     |
+
+---
+
+## 🔍 Trazabilidad Detallada por Componente
+
+### 🧠 Motor de Juego Central
+
+- **Clase**: `Sudoku`
+- **Pruebas**: `SudokuTest.java` (líneas 9-16)
+- **Cobertura**: Validación de reglas, colocación de números, detección de solución
+
+### 🔄 Generador de Puzzles
+
+- **Clase**: `GeneradorSudoku`
+- **Pruebas**: `GeneradorSudokuTest.java` (líneas 10-17)
+- **Cobertura**: Generación por dificultad, algoritmo de resolución
+
+### 🎨 Interfaz Gráfica
+
+- **Clase**: `SudokuGUI` (`SudokuGUI.java`: líneas 6-20)
+- **Pruebas**: `SudokuGUITest.java`
+- **Cobertura**: Generación de tablero visual, verificación de juego
+
+### 🖥️ Interfaz de Consola
+
+- **Clase**: `JuegoSudoku` (`JuegoSudoku.java`: líneas 7-18)
+- **Pruebas**: `JuegoSudokuTest.java` (líneas 12-17)
+- **Cobertura**: Flujo de juego por consola, manejo de entrada
+
+---
+
+## 📊 Métricas de Cobertura
+
+| Componente      | Métodos Implementados | Métodos Probados | Cobertura |
+|-----------------|------------------------|------------------|-----------|
+| `Sudoku`        | 8                      | 6                | 75%       |
+| `GeneradorSudoku` | 3                    | 2                | 67%       |
+| `SudokuGUI`     | 3                      | 2                | 67%       |
+| `JuegoSudoku`   | 2                      | 1                | 50%       |
+
+---
+
+## 📌 Trazabilidad de Requisitos No Funcionales
+
+| Requisito No Funcional | Implementación                        | Evidencia                                                                 |
+|------------------------|----------------------------------------|---------------------------------------------------------------------------|
+| RNF-001: Testabilidad  | Inyección de dependencias             | Constructores parametrizados en `JuegoSudoku`                             |
+| RNF-002: Mantenibilidad | Separación de responsabilidades       | Interfaces `SudokuInterface`, `JuegoSudokuInterface`                      |
+| RNF-003: Usabilidad    | Validación en tiempo real             | `DocumentListener` en `SudokuGUI`                                        |
+| RNF-004: Robustez      | Manejo de excepciones                 | `InputMismatchException` en `JuegoSudoku`                                 |
+
+---
