@@ -66,7 +66,7 @@ public class Sudoku implements SudokuInterface {
 
         // Verifica si el movimiento es válido
         if (!esMovimientoValido(fila, columna, valor)) {
-            throw new MovimientoInvalidoException("No se puede colocar el número " + valor + " en la posición (" + fila + ", " + columna + ") porque viola las reglas del Sudoku.");
+            throw new MovimientoInvalidoException("No se puede colocar el número " + valor + " en la posición (" + fila + ", " + columna + ") ");
         }
 
         // Movimiento válido, se coloca el número
