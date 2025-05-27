@@ -240,3 +240,108 @@ Sudoku --> GeneradorSudoku : llama a
 | Interfaz Gráfica     | Experiencia visual moderna  | Swing GUI con SudokuGUI                | SudokuGUI.java:15-20          | Validación en tiempo real, feedback visual, botones interactivos                |
 | Validación           | Verificar reglas del Sudoku | Método esMovimientoValido              | Sudoku.java:18-22             | Validación de filas, columnas y bloques 3x3                                     |
 | Testing              | Garantizar calidad del código | Suite de pruebas JUnit               | SudokuTest.java:25-27         | Pruebas unitarias para todos los componentes                                    |
+
+
+# caso de uso  
+
+```mermaid
+flowchart LR
+    subgraph Jugador
+        A1[Colocar Número]
+        A2[Resolver Puzzle Automáticamente]
+        A3[Verificar Solución]
+        A4[Generar Puzzle]
+        A5[Seleccionar Dificultad]
+    end
+
+    subgraph SistemaGenerador [Sistema Generador]
+        B1(( ))
+    end
+
+    A1 --> A6[Validar Movimiento]
+    A2 --> A7[Mostrar Tablero]
+
+    B1 --> A2
+    B1 --> A3
+    B1 --> A4
+
+    Jugador -.-> A1
+    Jugador -.-> A2
+    Jugador -.-> A3
+    Jugador -.-> A4
+    Jugador -.-> A5
+```
+
+# Diagrama interaccion
+
+```mermaid
+sequenceDiagram
+    participant Usuario
+    participant SudokuGUI
+    participant Sudoku
+    participant GeneradorSudoku
+    participant JuegoSudoku
+
+    Usuario ->> SudokuGUI: Crear nueva instancia
+    SudokuGUI ->> GeneradorSudoku: new Sudoku()
+    GeneradorSudoku ->> Sudoku: generarPuzzleAleat()
+
+    GeneradorSudoku ->> GeneradorSudoku: generarTablero() -> Backtracking
+    GeneradorSudoku ->> GeneradorSudoku: removerCeldas según dificultad
+    GeneradorSudoku ->> Sudoku: setSudokuGUI() para cada pista
+
+    Sudoku ->> SudokuGUI: Tablero generado
+    SudokuGUI ->> Usuario: Mostrar tablero visual
+
+    loop [Mientras no sea resuelto]
+        Usuario ->> SudokuGUI: Escribir número en celda
+        SudokuGUI ->> Sudoku: esMovimientoValido()
+        Sudoku ->> Sudoku: validarFilaColumnaBloque
+        SudokuGUI ->> Usuario: Feedback visual (error)
+        Usuario ->> SudokuGUI: Click "Verificar"
+        SudokuGUI ->> Sudoku: verificarJuego()
+        Sudoku ->> SudokuGUI: estadoJuego()
+    end
+
+    SudokuGUI ->> Usuario: Mostrar resultado
+
+    %% Consola
+    Usuario ->> JuegoSudoku: generarTableroSudoku()
+    JuegoSudoku ->> Sudoku: new Sudoku()
+    Sudoku ->> Sudoku: Tablero ASCII
+
+    loop [Mientras no sea resuelto]
+        Usuario ->> JuegoSudoku: Ingresar fila, columna, valor
+        JuegoSudoku ->> Sudoku: esMovimientoValido()
+        Sudoku ->> JuegoSudoku: Resultado movimiento
+        JuegoSudoku ->> Usuario: Feedback textual
+    end
+```
+
+# Diagrama de estado
+
+```mermaid
+stateDiagram-v2
+    [*] --> Inicializado
+    Inicializado --> GenerandoPuzzle : generarTablero(dificultad)
+    GenerandoPuzzle --> TableroListo : puzzle generado
+    TableroListo --> GenerandoPuzzle : generar nuevo puzzle
+    TableroListo --> EsperandoMovimiento : primer movimiento
+
+    state Jugando {
+        EsperandoMovimiento --> ValidandoMovimiento : colocarNumero()
+        ValidandoMovimiento --> MovimientoValido : esMovimientoValido() = true
+        ValidandoMovimiento --> MovimientoInvalido : esMovimientoValido() = false
+
+        MovimientoValido --> EsperandoMovimiento : continuar jugando
+        MovimientoInvalido --> EsperandoMovimiento : mostrar error
+
+        EsperandoMovimiento --> VerificandoSolucion : verificar juego
+        VerificandoSolucion --> EsperandoMovimiento : no resuelto
+        VerificandoSolucion --> Resuelto : estaResuelto() = true
+    }
+
+    Resuelto --> [*] : juego completado
+    Inicializado --> Interrumpido : error de entrada/salida
+    Interrumpido --> [*]
+```
