@@ -229,3 +229,14 @@ Sudoku --> GeneradorSudoku : llama a
 | RNF-004: Robustez      | Manejo de excepciones                 | `InputMismatchException` en `JuegoSudoku`                                 |
 
 ---
+
+# Objetivo Proyecto 
+
+| Componente           | Objetivo                    | Implementación                        | Archivos Clave               | Funcionalidades                                                                 |
+|----------------------|-----------------------------|----------------------------------------|-------------------------------|----------------------------------------------------------------------------------|
+| Motor de Juego       | Lógica central del Sudoku   | Clase Sudoku con validación completa   | Sudoku.java:3-10              | Validación de movimientos, gestión de estado, verificación de soluciones        |
+| Generación de Puzzles| Crear puzzles automáticamente| Algoritmos de backtracking             | GeneradorSudoku.java:10-15    | 3 niveles de dificultad (30, 40, 50 celdas removidas)                           |
+| Interfaz Consola     | Interacción por línea de comandos | Clase JuegoSudoku                 | JuegoSudoku.java:21-25        | Entrada de datos, manejo de errores, feedback textual                           |
+| Interfaz Gráfica     | Experiencia visual moderna  | Swing GUI con SudokuGUI                | SudokuGUI.java:15-20          | Validación en tiempo real, feedback visual, botones interactivos                |
+| Validación           | Verificar reglas del Sudoku | Método esMovimientoValido              | Sudoku.java:18-22             | Validación de filas, columnas y bloques 3x3                                     |
+| Testing              | Garantizar calidad del código | Suite de pruebas JUnit               | SudokuTest.java:25-27         | Pruebas unitarias para todos los componentes                                    |
